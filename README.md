@@ -54,7 +54,6 @@ The script can be configured in a few ways:
     * `OPENPROJECT_API_TOKEN`: Your OpenProject API token.
     * `OLLAMA_API_URL` (Optional): The URL for your Ollama API (defaults to `http://localhost:11434/api/generate`).
     * `OLLAMA_MODEL_NAME` (Optional): The name of the model Ollama should use (defaults to `mistral`).
-    * **Note:** `PROJECT_IDENTIFIER` is no longer used as the script processes all accessible projects.
 
 2.  **`.env` File:**
     Create a `.env` file in the same directory as the script with the following content:
