@@ -41,13 +41,22 @@ handler.setFormatter(JsonFormatter())
 logger.addHandler(handler)
 logger.propagate = False # Prevent duplicate logs if root logger is also configured
 
+# --- Helper function to convert string to boolean ---
+def str_to_bool(value):
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return False # Or True, depending on desired default for None
+    return value.lower() in ('true', '1', 't', 'y', 'yes')
+
 # --- Configuration ---
 OPENPROJECT_URL = os.getenv("OPENPROJECT_URL", "https://your-openproject-instance.com")
 API_TOKEN = os.getenv("OPENPROJECT_API_TOKEN", "fake-api-token")
 
 OLLAMA_API_URL = os.getenv("OLLAMA_API_URL", "https://ollama-url.com/api/generate")
 OLLAMA_MODEL_NAME = os.getenv("OLLAMA_MODEL_NAME", "mistral")
-OLLAMA_MODEL_NAME = os.getenv("VERIFY_SSL", "True")
+# Correctly initialize VERIFY_SSL as a boolean
+VERIFY_SSL = str_to_bool(os.getenv("VERIFY_SSL", "True"))
 OLLAMA_REQUEST_TIMEOUT = 1800 # 30 mins
 
 AI_COMMENT_MARKER = "🤖 AI Generated Context:\n\n"
@@ -264,7 +273,7 @@ def get_context_from_ollama(task_id, subject, description):
 
 # --- Main Processing Logic ---
 def main():
-    logger.info({"event": "script_started", "script_version": "v4-json-logging-activities-comment"})
+    logger.info({"event": "script_started", "script_version": "v4-json-logging-activities-comment", "verify_ssl_status": VERIFY_SSL})
 
     config_ok = True
     if not OPENPROJECT_URL or OPENPROJECT_URL == "https://your-openproject-instance.com": # Basic check
@@ -364,6 +373,9 @@ def main():
     logger.info({"event": "script_finished", "summary": summary_stats})
 
 if __name__ == "__main__":
+    # The 'global VERIFY_SSL' declaration was removed from here as it's not needed
+    # for assignments to module-level globals within this top-level execution block.
+    
     # Load .env file if present
     if os.path.exists(".env"):
         logger.info({"event": "loading_env_file", "path": ".env"})
@@ -375,14 +387,17 @@ if __name__ == "__main__":
                         key, value = line.split("=", 1)
                         key = key.strip() # Remove potential whitespace around key
                         value = value.strip() # Remove potential whitespace around value
-                        os.environ[key] = value
+                        os.environ[key] = value # Set environment variable
                         # Update globals if they were initialized before .env was loaded
                         if key == "OPENPROJECT_URL": OPENPROJECT_URL = value
                         if key == "OPENPROJECT_API_TOKEN": API_TOKEN = value
                         if key == "OLLAMA_API_URL": OLLAMA_API_URL = value
                         if key == "OLLAMA_MODEL_NAME": OLLAMA_MODEL_NAME = value
-                        if key == "VERIFY_SSL": VERIFY_SSL = value
+                        if key == "VERIFY_SSL": 
+                            VERIFY_SSL = str_to_bool(value) # Convert to bool when loading from .env
         except Exception as e:
             logger.error({"event": "env_file_load_error", "error": str(e)}, exc_info=True)
-    
+    else: 
+        pass # VERIFY_SSL retains its value from initial os.getenv or is already correctly boolean
+
     main()
