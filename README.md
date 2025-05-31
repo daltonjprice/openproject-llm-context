@@ -59,10 +59,10 @@ The script can be configured in a few ways:
 2.  **`.env` File:**
     Create a `.env` file in the same directory as the script with the following content:
     ```env
-    OPENPROJECT_URL=[https://your-openproject.example.com](https://your-openproject.example.com)
+    OPENPROJECT_URL=https://your-openproject.example.com
     OPENPROJECT_API_TOKEN=your_very_long_api_token_here
     OLLAMA_MODEL_NAME=mistral
-    # OLLAMA_API_URL=http://localhost:11434/api/generate
+    OLLAMA_API_URL=http://localhost:11434/api/generate
     VERIFY_SSL=True 
     ```
     The script will automatically try to load variables from this file if it exists.
