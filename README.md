@@ -54,6 +54,7 @@ The script can be configured in a few ways:
     * `OPENPROJECT_API_TOKEN`: Your OpenProject API token.
     * `OLLAMA_API_URL` (Optional): The URL for your Ollama API (defaults to `http://localhost:11434/api/generate`).
     * `OLLAMA_MODEL_NAME` (Optional): The name of the model Ollama should use (defaults to `mistral`).
+    * `VERIFY_SSL` : A boolean value to determine if the requests module should verify SSL. 
 
 2.  **`.env` File:**
     Create a `.env` file in the same directory as the script with the following content:
@@ -62,26 +63,15 @@ The script can be configured in a few ways:
     OPENPROJECT_API_TOKEN=your_very_long_api_token_here
     OLLAMA_MODEL_NAME=mistral
     # OLLAMA_API_URL=http://localhost:11434/api/generate
+    VERIFY_SSL=True 
     ```
     The script will automatically try to load variables from this file if it exists.
-
-3.  **Directly in the Script:**
-    You can hardcode the configuration values at the top of the Python script. However, this is generally not recommended for sensitive information like API tokens.
-
-    ```python
-    # --- Configuration ---
-    OPENPROJECT_URL = "[https://your-openproject-instance.com](https://your-openproject-instance.com)"
-    API_TOKEN = "YOUR_OPENPROJECT_API_TOKEN"
-    OLLAMA_API_URL = "http://localhost:11434/api/generate"
-    OLLAMA_MODEL_NAME = "mistral"
-    # ... other configurations ...
-    ```
 
 ## Usage
 
 1.  Ensure all prerequisites are met and configurations are set up.
 2.  Make sure your Ollama service is running and the specified model is available.
-3.  Run the Python script from your terminal:
+3.  Run the Python script from your terminal(or use the provided Dockerfile):
     ```bash
     python your_script_name.py
     ```
@@ -138,7 +128,6 @@ The script will then:
 
 * **Interpreting JSON Logs:** Each line of output is a self-contained JSON object. You can use tools like `jq` on the command line to pretty-print, filter, and query these logs. Example: `python your_script_name.py | jq '. | select(.level=="ERROR")'`
 * **API Permissions:** Ensure the OpenProject API token has permissions to list projects, and then read/update work packages within those projects.
-* **Lock Version Errors:** OpenProject uses `lockVersion` to prevent concurrent modifications. The script handles this. If errors occur, re-running often resolves it for the specific task.
 * **Ollama Issues:** Ensure Ollama is running, accessible, and the model is pulled.
 * **Prompt Engineering:** The quality of LLM output heavily depends on the `LLM_PROMPT_TEMPLATE`.
 * **Rate Limiting:** For very large instances, consider adding a small `time.sleep()` in the loops if you encounter API rate limits (though less common with self-hosted OpenProject).

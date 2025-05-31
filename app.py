@@ -47,6 +47,7 @@ API_TOKEN = os.getenv("OPENPROJECT_API_TOKEN", "fake-api-token")
 
 OLLAMA_API_URL = os.getenv("OLLAMA_API_URL", "https://ollama-url.com/api/generate")
 OLLAMA_MODEL_NAME = os.getenv("OLLAMA_MODEL_NAME", "mistral")
+OLLAMA_MODEL_NAME = os.getenv("VERIFY_SSL", "True")
 OLLAMA_REQUEST_TIMEOUT = 1800 # 30 mins
 
 AI_COMMENT_MARKER = "🤖 AI Generated Context:\n\n"
