@@ -12,7 +12,7 @@ Tested on dogshit hardware(Dell R620) with no GPU acceleration.
 I have everything running on RKE2 kubernetes, but am limited by ESXI licensing for the number of CPUs I can throw at it - 8.  (hopefully proxmox someday but it's my homelab and I do this all day for work too)
 Typical response time from Ollama with mistral is 10-15 mins when using the dogshit hardware so I set the timeout high in the script, but I assume with some GPU acceleration and newer generation CPUs it would do much better. 
 
-It was tested against OpenProject 12 and 13. Both with 10-15 projects and 100 or so tasks in total. 
+It was tested against OpenProject 12/13/14/15 and 16. All with 10-15 projects and 100 or so tasks in total. 
 
 I run it nightly as a cronjob. 
 
