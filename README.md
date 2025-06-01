@@ -1,6 +1,6 @@
 # OpenProject Task Context Enhancer with Ollama
 
-This Python script automates the process of enriching tasks (work packages) across **all accessible projects** in an OpenProject instance. It generates additional context using a locally running Ollama Large Language Model (LLM), and this context is added as a comment to the respective task.
+This Python script automates the process of enriching open tasks (work packages) across **all accessible projects** in an OpenProject instance. It generates additional context using a locally running Ollama Large Language Model (LLM), and this context is added as a comment to the respective task.
 
 The script utilizes **structured JSON logging** for better monitoring and integration with log management systems. It's also designed to avoid re-processing tasks that already have an AI-generated comment, making it safe to run repeatedly.
 

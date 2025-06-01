@@ -139,23 +139,26 @@ def get_openproject_tasks_for_project(project_identifier_or_id, project_name):
     log_context = {"project_identifier": project_identifier_or_id, "project_name": project_name}
     logger.info({"event": "fetching_project_tasks_started", **log_context})
     api_suffix = f"/api/v3/projects/{project_identifier_or_id}/work_packages"
-    # Add filter to get only open tasks, adjust as needed for your definition of "open"
-    # Example: [{"status_id":{"operator":"o"}}]  # 'o' typically means open statuses
-    # You might need to find the correct status IDs for "open" in your OpenProject instance.
-    # For simplicity, this example fetches all tasks. You can add filters here:
+    
+    # Add filter to get only open tasks.
+    # The operator "o" usually represents open statuses in OpenProject.
+    # If this doesn't work for your specific OpenProject setup,
+    # you may need to find the specific status IDs that represent "open" states
+    # and filter by them, e.g., {"status_id": {"operator": "=", "values": ["1", "2"]}}
+    # where "1" and "2" are the IDs of your open statuses.
+    filters = [
+        {"status": {"operator": "o"}}
+    ]
     params = {
-        # "filters": json.dumps([
-        #     {"status": {"operator": "o"}}, # This is a common way to filter by open statuses
-        #     # {"assigneeOrGroup": {"operator": "=", "values": ["me"]}} # Example: assigned to me
-        # ])
+        "filters": json.dumps(filters)
     }
-    data = _openproject_api_request('get', api_suffix, params=params if params.get("filters") else None)
+    data = _openproject_api_request('get', api_suffix, params=params)
 
     if data and '_embedded' in data and 'elements' in data['_embedded']:
         tasks = data['_embedded']['elements']
-        logger.info({"event": "fetching_project_tasks_success", "task_count": len(tasks), **log_context})
+        logger.info({"event": "fetching_project_tasks_success", "task_count": len(tasks), "filter_applied": "open_statuses", **log_context})
         return tasks
-    logger.warning({"event": "fetching_project_tasks_failed", "message": "No tasks found or error.", **log_context})
+    logger.warning({"event": "fetching_project_tasks_failed", "message": "No open tasks found or error.", "filter_applied": "open_statuses", **log_context})
     return []
 
 def get_task_activities(task_id):
@@ -373,9 +376,6 @@ def main():
     logger.info({"event": "script_finished", "summary": summary_stats})
 
 if __name__ == "__main__":
-    # The 'global VERIFY_SSL' declaration was removed from here as it's not needed
-    # for assignments to module-level globals within this top-level execution block.
-    
     # Load .env file if present
     if os.path.exists(".env"):
         logger.info({"event": "loading_env_file", "path": ".env"})
